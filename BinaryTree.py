@@ -8,28 +8,32 @@ class Node:
         self.right = None
  
 
-def findLCARecur(root, n1, n2, v):
+# Returns the Node which contains the lca
+
+def findLCARecursive(root, number_1, number_2, found):
      
     if root is None:
         return None
  
-    if root.key == n1 :
-        v[0] = True
+    if root.key == number_1 :
+        found[0] = True
         return root
  
-    if root.key == n2:
-        v[1] = True
+    if root.key == number_2:
+        found[1] = True
         return root
  
-    left_lca = findLCARecur(root.left, n1, n2, v)
-    right_lca = findLCARecur(root.right, n1, n2, v)
+    left_lca = findLCARecursive(root.left, number_1, number_2, found)
+    right_lca = findLCARecursive(root.right, number_1, number_2, found)
  
     if left_lca and right_lca:
         return root
  
     return left_lca if left_lca is not None else right_lca
  
- 
+
+# Determinse whether a value is in the tree
+
 def find(root, k):
      
     if root is None:
@@ -40,37 +44,42 @@ def find(root, k):
         return True
      
     return False
- 
-def findLCA(root, n1, n2):
+    
+
+# Returns the Node which contains the lca if boht numbers are in the tree, otherwise None 
+
+def findLCA(root, number_1, number_2):
      
-    v = [False, False]
+    found = [False, False]
  
-    lca = findLCARecur(root, n1, n2, v)
+    lca = findLCARecursive(root, number_1, number_2, found)
  
-    if (v[0] and v[1] or v[0] and find(lca, n2) or v[1] and
-        find(lca, n1)):
+    if (found[0] and found[1] or found[0] and find(lca, number_2) or found[1] and
+        find(lca, number_1)):
         return lca
  
     return None
  
+
+
 class TestCases(unittest.TestCase):
 
-    def test_empty_tree(self):
+    def testEmptyTree(self):
         root = None
         self.assertIsNone(findLCA(root, 1, 1))
 
-    def test_one_node(self):
+    def testOneNode(self):
         root = Node(1)
         self.assertEqual(1, findLCA(root, 1, 1).key)
 
-    def test_unbalanced_tree(self):
+    def testUnbalancedTree(self):
         root = Node(1)
         root.left = Node(2)
         root.left.left = Node(3)
         root.left.right = Node(4)
         self.assertEqual(2, findLCA(root, 3, 4).key)
     
-    def test_balance_tree(self):
+    def testBalanceTree(self):
         root = Node(1)
         root.left = Node(2)
         root.right = Node(3)
